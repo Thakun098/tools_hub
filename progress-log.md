@@ -25,3 +25,22 @@
 
 - Build ใช้ system Python 3.14 ซึ่งมี packages จำนวนมาก (numpy, PIL, IPython ฯลฯ) ถูก pull เข้ามาด้วย ทำให้ขนาดใหญ่กว่าที่ควร — แนะนำให้ build จาก venv เฉพาะในอนาคต
 - Plugin จะถูกติดตั้งแยกโดยผู้ใช้ภายหลัง
+
+---
+
+## 2026-08-07 - Core Hub release and external Plugin validation
+
+### Validated flow
+
+- Published the Windows x64 Core Hub as a ZIP without bundling FreeSRT.
+- Downloaded and extracted the Core Hub release into a clean location.
+- Confirmed that the Core Hub starts normally with no bundled Plugin.
+- Downloaded the separate FreeSRT Plugin ZIP and extracted it under `ToolsHub/plugins/free_srt/`.
+- Restarted Tools Hub and confirmed that FreeSRT was discovered, loaded, and usable normally.
+
+### Result
+
+- **PASS:** The manual download-and-extract Plugin installation contract works end to end.
+- The validated on-disk entry point is `ToolsHub/plugins/free_srt/plugin.json`.
+- This validation covers the current manual installation flow; an in-app catalog/downloader remains future work.
+
