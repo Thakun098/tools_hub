@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tools Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='hub/hub.css') }}">
+</head>
+<body data-theme="terminal">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 8.5 9 5l4 3.5L9 12l-4-3.5Zm6 7L15 12l4 3.5-4 3.5-4-3.5Z"/><path d="m13 8.5 2-1.75L19 10l-4 3.5L13 12"/></svg>
+        </div>
+        <div class="brand-copy"><div class="brand-name">Tools Hub</div><div class="brand-sub">handcrafted utility launcher</div></div>
+      </div>
+      <div>
+        <div class="nav-label">Workspace</div>
+        <nav class="nav" aria-label="Primary navigation">
+          <button class="nav-button active" data-tab="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg><span>Overview</span></button>
+          <button class="nav-button" data-tab="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z"/><path d="M8 20V7a3 3 0 0 1 3-3"/></svg><span>Library</span><span class="nav-count">4</span></button>
+          <button class="nav-button" data-tab="updates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v6h-6"/><path d="M12 8v4l2.5 1.5"/></svg><span>Updates</span><span class="nav-count" id="nav-update-count">2</span></button>
+        </nav>
+      </div>
+      <div>
+        <div class="nav-label">Manage</div>
+        <nav class="nav">
+          <button class="nav-button" id="check-side"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 12a8 8 0 0 1 14.4-4.8"/><path d="M20 12a8 8 0 0 1-14.4 4.8"/><path d="M18 4v5h-5M6 20v-5h5"/></svg><span>Check updates</span></button>
+          <button class="nav-button" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="m19.4 15 .1.1a2 2 0 0 1-2.8 2.8l-.1-.1a2 2 0 0 0-3.4 1.4V19a2 2 0 0 1-4 0v-.2a2 2 0 0 0-3.4-1.4l-.1.1A2 2 0 0 1 3 14.7l.1-.1A2 2 0 0 0 1.7 11H2a2 2 0 0 1 0-4h.2a2 2 0 0 0 1.4-3.4L3.5 3.5A2 2 0 0 1 6.3.7l.1.1A2 2 0 0 0 9.8-.6V-.8a2 2 0 0 1 4 0v.2a2 2 0 0 0 3.4 1.4l.1-.1A2 2 0 0 1 20.1 3.5l-.1.1a2 2 0 0 0 1.4 3.4h.2a2 2 0 0 1 0 4h-.2a2 2 0 0 0-1.4 3.4Z" transform="translate(0 4) scale(.85)"/></svg><span>Settings</span></button>
+        </nav>
+      </div>
+      <div class="sidebar-bottom"><div class="sync-box"><div class="sync-line"><span><i class="dot"></i>Repo connected</span><span>●</span></div><div class="sync-sub">Last checked 4 min ago<br />github.com/handcrafft/tools</div></div></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><div class="crumb">Workspace / <span id="crumb-label">Overview</span></div><div class="top-actions"><button class="icon-button" id="theme-cycle" aria-label="Cycle design"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v2M12 19v2M5.64 5.64l1.42 1.42M16.94 16.94l1.42 1.42M3 12h2M19 12h2M5.64 18.36l1.42-1.42M16.94 7.06l1.42-1.42"/><circle cx="12" cy="12" r="4"/></svg></button><button class="user-button"><span class="avatar">HC</span><span>Handcrafft</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="13"><path d="m7 10 5 5 5-5"/></svg></button></div></div>
+
+      <section class="hero"><div class="hero-copy"><h1>One home for<br /><span style="color:var(--accent)">useful tools.</span></h1><p>Discover, install and keep your handcrafted programs in sync — like a game launcher, built for the tools you actually use.</p></div><div class="hero-side"><div class="theme-selector" aria-label="Design directions"><button class="theme-button active" data-theme-choice="terminal">01 / Terminal · Dark</button><button class="theme-button" data-theme-choice="editorial">02 / Editorial · Light</button></div><div class="theme-note" id="theme-note">Focused, compact, keyboard-friendly</div></div></section>
+
+      <section class="update-banner" id="update-banner"><div class="update-message"><div class="update-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg></div><div><strong id="update-title">2 updates are ready to review</strong><span id="update-subtitle">Choose what to update. Nothing changes without your approval.</span></div></div><button class="button" id="update-all">Review updates</button></section>
+
+      <div class="content-grid">
+        <section class="panel" id="tool-panel"><div class="panel-head"><div><div class="panel-title" id="panel-title">Your toolkit</div><div class="panel-meta" id="panel-meta">4 programs · 1 installed · 2 updates available</div></div><input class="search" id="search" type="search" placeholder="Search tools" aria-label="Search tools" /></div><div class="tool-list" id="tool-list">
+        </div><div class="empty" id="empty-state">No tools match your search.</div></section>
+
+        <aside class="side-stack"><section class="panel release"><h2>Latest from the repo</h2><p>Small, useful releases from the Handcrafft ecosystem.</p><div class="release-list"><div class="release-item"><div class="mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3v4M16 3v4M5 9h14M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/><path d="M8 13h3M8 17h2"/></svg></div><div><div class="release-name">Free SRT</div><div class="release-version">v1.4.2 · subtitle workflow</div></div><div class="release-date">Today</div></div><div class="release-item"><div class="mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 17 5-5 4 4 3-3 4 4"/><path d="M4 4h16v16H4z"/></svg></div><div><div class="release-name">Batch Canvas</div><div class="release-version">v0.9.1 · batch exports</div></div><div class="release-date">2d ago</div></div><div class="release-item"><div class="mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M8 7.5c0-1.4 1.8-2.5 4-2.5s4 1.1 4 2.5-1.8 2.5-4 2.5-4 1.1-4 2.5 1.8 2.5 4 2.5 4 1.1 4 2.5-1.8 2.5-4 2.5-4-1.1-4-2.5"/></svg></div><div><div class="release-name">Voice Notes</div><div class="release-version">v0.3.0 · local-first notes</div></div><div class="release-date">5d ago</div></div></div></section><section class="panel repo-card"><h2>Source &amp; updates</h2><p>The prototype is ready for a Git-backed catalog. Each program can point to its own release manifest.</p><div class="repo-line"><span>Catalog</span><span>tools.json</span></div><div class="repo-line"><span>Channel</span><span>stable</span></div><div class="repo-line"><span>Auto-check</span><span>On launch</span></div></section></aside>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast"><span class="toast-dot"></span><span id="toast-message">Done</span></div>
+
+  <script src="{{ url_for('static', filename='hub/hub.js') }}"></script>
+</body>
+</html>

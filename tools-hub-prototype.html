@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tools Hub — Prototype</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-elevated: #141b24;
+      --surface: rgba(255,255,255,.055);
+      --surface-strong: rgba(255,255,255,.09);
+      --border: rgba(255,255,255,.1);
+      --text: #f4f7fb;
+      --muted: #8d9bab;
+      --accent: #b6f34a;
+      --accent-strong: #91d829;
+      --accent-soft: rgba(182,243,74,.14);
+      --warning: #ffca67;
+      --danger: #ff8f8f;
+      --success: #74e0b1;
+      --shadow: 0 22px 60px rgba(0,0,0,.2);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-width: 320px; background: var(--bg); color: var(--text); font-family: var(--font); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    svg { display: block; }
+
+    body[data-theme="editorial"] {
+      --bg: #f2f0ea;
+      --bg-elevated: #fbfaf6;
+      --surface: rgba(255,255,255,.72);
+      --surface-strong: #fffefb;
+      --border: rgba(25,38,54,.12);
+      --text: #192636;
+      --muted: #6d7784;
+      --accent: #2447d8;
+      --accent-strong: #1a35a4;
+      --accent-soft: rgba(36,71,216,.1);
+      --warning: #a66b1d;
+      --success: #178b68;
+      --shadow: 0 22px 60px rgba(31,42,57,.08);
+    }
+
+    .app-shell { display: grid; grid-template-columns: 248px minmax(0,1fr); min-height: 100vh; }
+    .sidebar { position: sticky; top: 0; height: 100vh; padding: 28px 18px; border-right: 1px solid var(--border); background: var(--bg-elevated); display: flex; flex-direction: column; gap: 28px; }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 0 10px; }
+    .brand-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: var(--accent); color: #152009; box-shadow: 0 7px 18px color-mix(in srgb, var(--accent) 25%, transparent); }
+    .brand-mark svg { width: 20px; height: 20px; stroke-width: 2.6; }
+    .brand-name { font-size: 17px; font-weight: 760; letter-spacing: -.03em; }
+    .brand-sub { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .nav-label { padding: 0 11px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .nav { display: grid; gap: 6px; }
+    .nav-button { display: flex; align-items: center; gap: 11px; width: 100%; border: 0; border-radius: 12px; padding: 11px 12px; color: var(--muted); background: transparent; font-size: 13px; text-align: left; transition: .18s ease; }
+    .nav-button:hover, .nav-button.active { background: var(--surface); color: var(--text); }
+    .nav-button.active { box-shadow: inset 3px 0 0 var(--accent); }
+    .nav-button svg { width: 16px; height: 16px; stroke-width: 1.8; }
+    .nav-count { margin-left: auto; min-width: 22px; padding: 2px 6px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); font-size: 11px; text-align: center; }
+    .sidebar-bottom { margin-top: auto; }
+    .sync-box { padding: 14px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+    .sync-line { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+    .sync-sub { margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .dot { width: 7px; height: 7px; margin-right: 6px; display: inline-block; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 14%, transparent); }
+
+    .main { min-width: 0; padding: 30px clamp(22px,4vw,64px) 48px; }
+    .topbar { max-width: 1160px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+    .icon-button, .user-button { border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+    .icon-button { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; }
+    .icon-button svg { width: 16px; height: 16px; }
+    .user-button { display: flex; align-items: center; gap: 8px; padding: 6px 9px 6px 7px; border-radius: 99px; font-size: 12px; }
+    .avatar { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--accent); color: #16240a; font-weight: 800; font-size: 10px; }
+
+    .hero { max-width: 1160px; margin: 46px auto 28px; display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; }
+    h1 { margin: 0; font-size: clamp(34px,4.4vw,62px); line-height: .98; letter-spacing: -.065em; font-weight: 780; }
+    .hero-copy { max-width: 560px; }
+    .hero-copy p { max-width: 500px; margin: 16px 0 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+    .hero-side { min-width: 250px; }
+    .theme-selector { display: flex; justify-content: flex-end; gap: 7px; flex-wrap: wrap; }
+    .theme-button { border: 1px solid var(--border); border-radius: 99px; padding: 8px 11px; color: var(--muted); background: var(--surface); font-size: 11px; transition: .18s ease; }
+    .theme-button:hover, .theme-button.active { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+    .theme-note { margin-top: 10px; color: var(--muted); font-size: 11px; text-align: right; }
+
+    .update-banner { max-width: 1160px; margin: 0 auto 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--border)); border-radius: 16px; background: color-mix(in srgb, var(--warning) 7%, var(--surface)); }
+    .update-message { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .update-icon { width: 32px; height: 32px; display: grid; place-items: center; flex: none; border-radius: 10px; background: color-mix(in srgb, var(--warning) 16%, transparent); color: var(--warning); }
+    .update-icon svg { width: 16px; height: 16px; }
+    .update-message strong { display: block; font-size: 13px; }
+    .update-message span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .button { border: 0; border-radius: 11px; padding: 10px 14px; color: #16240a; background: var(--accent); font-size: 12px; font-weight: 800; transition: .18s ease; white-space: nowrap; }
+    .button:hover { transform: translateY(-1px); background: var(--accent-strong); color: white; }
+    .button.ghost { border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+    .button.ghost:hover { color: var(--accent); background: var(--accent-soft); }
+    .button.small { padding: 8px 11px; font-size: 11px; }
+
+    .content-grid { max-width: 1160px; margin: 0 auto; display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 22px; align-items: start; }
+    .panel { border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow); }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 22px 17px; }
+    .panel-title { font-size: 15px; font-weight: 760; letter-spacing: -.02em; }
+    .panel-meta { color: var(--muted); font-size: 11px; }
+    .search { width: 150px; border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; outline: none; color: var(--text); background: var(--surface); font-size: 11px; }
+    .search:focus { border-color: var(--accent); }
+    .tool-list { padding: 0 12px 12px; }
+    .tool-row { display: grid; grid-template-columns: 46px minmax(0,1fr) auto; gap: 13px; align-items: center; padding: 14px 10px; border-top: 1px solid var(--border); transition: .18s ease; }
+    .tool-row:hover { border-radius: 14px; background: var(--surface); }
+    .tool-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; color: white; font-weight: 820; font-size: 16px; letter-spacing: -.06em; }
+    .tool-icon.srt { background: linear-gradient(135deg,#ee725d,#c83251); }
+    .tool-icon.canvas { background: linear-gradient(135deg,#7d67ff,#3d22ae); }
+    .tool-icon.voice { background: linear-gradient(135deg,#2cc6ae,#167b90); }
+    .tool-icon.pixel { background: linear-gradient(135deg,#ffb84a,#df5a3c); }
+    .tool-name { font-size: 13px; font-weight: 760; }
+    .tool-desc { margin-top: 4px; overflow: hidden; color: var(--muted); font-size: 11px; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
+    .tool-info { min-width: 0; }
+    .tool-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
+    .tag { padding: 4px 7px; border-radius: 99px; color: var(--muted); background: var(--surface); font-size: 10px; }
+    .tag.green { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); }
+    .tag.orange { color: var(--warning); background: color-mix(in srgb, var(--warning) 13%, transparent); }
+    .tool-actions { display: flex; align-items: center; gap: 9px; }
+    .status { min-width: 62px; color: var(--muted); font-size: 10px; text-align: right; }
+    .status.update { color: var(--warning); }
+    .empty { display: none; padding: 30px; color: var(--muted); font-size: 12px; text-align: center; }
+
+    .side-stack { display: grid; gap: 22px; }
+    .release { padding: 22px; }
+    .release h2 { margin: 0; font-size: 16px; letter-spacing: -.03em; }
+    .release p { margin: 9px 0 18px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .release-list { display: grid; gap: 12px; }
+    .release-item { display: grid; grid-template-columns: 30px 1fr auto; gap: 9px; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); }
+    .release-item:first-child { padding-top: 0; border-top: 0; }
+    .mini-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; background: var(--accent-soft); color: var(--accent); }
+    .mini-icon svg { width: 15px; height: 15px; }
+    .release-name { font-size: 11px; font-weight: 750; }
+    .release-version { margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .release-date { color: var(--muted); font-size: 10px; }
+    .repo-card { padding: 22px; }
+    .repo-card h2 { margin: 0; font-size: 14px; }
+    .repo-card p { margin: 9px 0 15px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .repo-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid var(--border); font-size: 11px; }
+    .repo-line span:last-child { color: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; }
+
+    .toast { position: fixed; right: 22px; bottom: 22px; z-index: 4; display: flex; align-items: center; gap: 10px; max-width: 360px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 14px; color: var(--text); background: var(--bg-elevated); box-shadow: var(--shadow); font-size: 12px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+    .reduced-motion *,
+    @media (prefers-reduced-motion: reduce) { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+
+    @media (max-width: 960px) {
+      .app-shell { grid-template-columns: 76px minmax(0,1fr); }
+      .sidebar { padding: 24px 12px; align-items: center; }
+      .brand { padding: 0; }
+      .brand-copy, .nav-label, .nav-button span, .nav-count, .sync-box { display: none; }
+      .nav { width: 100%; }
+      .nav-button { justify-content: center; padding: 12px; }
+      .nav-button.active { box-shadow: inset 0 -3px 0 var(--accent); }
+      .content-grid { grid-template-columns: 1fr; }
+      .side-stack { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 640px) {
+      .main { padding: 18px 15px 32px; }
+      .sidebar { height: auto; min-height: 100vh; }
+      .topbar { align-items: flex-start; }
+      .hero { display: block; margin-top: 36px; }
+      .hero-side { margin-top: 22px; }
+      .theme-selector { justify-content: flex-start; }
+      .theme-note { text-align: left; }
+      .update-banner { align-items: flex-start; flex-direction: column; }
+      .update-banner .button { width: 100%; }
+      .panel-head { align-items: flex-start; flex-direction: column; }
+      .search { width: 100%; }
+      .tool-row { grid-template-columns: 42px minmax(0,1fr); }
+      .tool-icon { width: 42px; height: 42px; }
+      .tool-actions { grid-column: 2; justify-content: space-between; }
+      .status { text-align: left; }
+      .side-stack { grid-template-columns: 1fr; }
+      .user-button { padding-right: 7px; }
+      .user-button:not(.keep-label) { font-size: 0; }
+    }
+  </style>
+</head>
+<body data-theme="terminal">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 8.5 9 5l4 3.5L9 12l-4-3.5Zm6 7L15 12l4 3.5-4 3.5-4-3.5Z"/><path d="m13 8.5 2-1.75L19 10l-4 3.5L13 12"/></svg>
+        </div>
+        <div class="brand-copy"><div class="brand-name">Tools Hub</div><div class="brand-sub">handcrafted utility launcher</div></div>
+      </div>
+      <div>
+        <div class="nav-label">Workspace</div>
+        <nav class="nav" aria-label="Primary navigation">
+          <button class="nav-button active" data-tab="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg><span>Overview</span></button>
+          <button class="nav-button" data-tab="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z"/><path d="M8 20V7a3 3 0 0 1 3-3"/></svg><span>Library</span><span class="nav-count">4</span></button>
+          <button class="nav-button" data-tab="updates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v6h-6"/><path d="M12 8v4l2.5 1.5"/></svg><span>Updates</span><span class="nav-count" id="nav-update-count">2</span></button>
+        </nav>
+      </div>
+      <div>
+        <div class="nav-label">Manage</div>
+        <nav class="nav">
+          <button class="nav-button" id="check-side"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 12a8 8 0 0 1 14.4-4.8"/><path d="M20 12a8 8 0 0 1-14.4 4.8"/><path d="M18 4v5h-5M6 20v-5h5"/></svg><span>Check updates</span></button>
+          <button class="nav-button" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="m19.4 15 .1.1a2 2 0 0 1-2.8 2.8l-.1-.1a2 2 0 0 0-3.4 1.4V19a2 2 0 0 1-4 0v-.2a2 2 0 0 0-3.4-1.4l-.1.1A2 2 0 0 1 3 14.7l.1-.1A2 2 0 0 0 1.7 11H2a2 2 0 0 1 0-4h.2a2 2 0 0 0 1.4-3.4L3.5 3.5A2 2 0 0 1 6.3.7l.1.1A2 2 0 0 0 9.8-.6V-.8a2 2 0 0 1 4 0v.2a2 2 0 0 0 3.4 1.4l.1-.1A2 2 0 0 1 20.1 3.5l-.1.1a2 2 0 0 0 1.4 3.4h.2a2 2 0 0 1 0 4h-.2a2 2 0 0 0-1.4 3.4Z" transform="translate(0 4) scale(.85)"/></svg><span>Settings</span></button>
+        </nav>
+      </div>
+      <div class="sidebar-bottom"><div class="sync-box"><div class="sync-line"><span><i class="dot"></i>Repo connected</span><span>●</span></div><div class="sync-sub">Last checked 4 min ago<br />github.com/handcrafft/tools</div></div></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><div class="crumb">Workspace / <span id="crumb-label">Overview</span></div><div class="top-actions"><button class="icon-button" id="theme-cycle" aria-label="Cycle design"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v2M12 19v2M5.64 5.64l1.42 1.42M16.94 16.94l1.42 1.42M3 12h2M19 12h2M5.64 18.36l1.42-1.42M16.94 7.06l1.42-1.42"/><circle cx="12" cy="12" r="4"/></svg></button><button class="user-button"><span class="avatar">HC</span><span>Handcrafft</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="13"><path d="m7 10 5 5 5-5"/></svg></button></div></div>
+
+      <section class="hero"><div class="hero-copy"><h1>One home for<br /><span style="color:var(--accent)">useful tools.</span></h1><p>Discover, install and keep your handcrafted programs in sync — like a game launcher, built for the tools you actually use.</p></div><div class="hero-side"><div class="theme-selector" aria-label="Design directions"><button class="theme-button active" data-theme-choice="terminal">01 / Terminal · Dark</button><button class="theme-button" data-theme-choice="editorial">02 / Editorial · Light</button></div><div class="theme-note" id="theme-note">Focused, compact, keyboard-friendly</div></div></section>
+
+      <section class="update-banner" id="update-banner"><div class="update-message"><div class="update-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg></div><div><strong id="update-title">2 updates are ready to review</strong><span id="update-subtitle">Choose what to update. Nothing changes without your approval.</span></div></div><button class="button" id="update-all">Review updates</button></section>
+
+      <div class="content-grid">
+        <section class="panel" id="tool-panel"><div class="panel-head"><div><div class="panel-title" id="panel-title">Your toolkit</div><div class="panel-meta" id="panel-meta">4 programs · 1 installed · 2 updates available</div></div><input class="search" id="search" type="search" placeholder="Search tools" aria-label="Search tools" /></div><div class="tool-list" id="tool-list">
+          <article class="tool-row" data-tool="free srt" data-installed="true" data-update="false"><div class="tool-icon srt">SRT</div><div class="tool-info"><div class="tool-name">Free SRT</div><div class="tool-desc">Local transcription and subtitle editor for video makers.</div><div class="tool-tags"><span class="tag green">Installed</span><span class="tag">v1.4.2</span><span class="tag">GPU ready</span></div></div><div class="tool-actions"><div class="status">Ready</div><button class="button small ghost launch-button">Launch</button></div></article>
+          <article class="tool-row" data-tool="batch canvas" data-installed="false" data-update="true"><div class="tool-icon canvas">BC</div><div class="tool-info"><div class="tool-name">Batch Canvas</div><div class="tool-desc">Resize, rename and export image sets in one pass.</div><div class="tool-tags"><span class="tag orange">Update v0.9.1</span><span class="tag">v0.8.6</span><span class="tag">Images</span></div></div><div class="tool-actions"><div class="status update">Update</div><button class="button small action-button" data-action="update">Update</button></div></article>
+          <article class="tool-row" data-tool="voice notes" data-installed="false" data-update="false"><div class="tool-icon voice">VN</div><div class="tool-info"><div class="tool-name">Voice Notes</div><div class="tool-desc">Turn quick thoughts into searchable local notes.</div><div class="tool-tags"><span class="tag">Not installed</span><span class="tag">v0.3.0</span><span class="tag">Audio</span></div></div><div class="tool-actions"><div class="status">Free</div><button class="button small action-button" data-action="install">Install</button></div></article>
+          <article class="tool-row" data-tool="pixel forge" data-installed="false" data-update="true"><div class="tool-icon pixel">PF</div><div class="tool-info"><div class="tool-name">Pixel Forge</div><div class="tool-desc">A tiny sprite and texture workbench for game projects.</div><div class="tool-tags"><span class="tag orange">Update v2.1.0</span><span class="tag">v2.0.4</span><span class="tag">Creative</span></div></div><div class="tool-actions"><div class="status update">Update</div><button class="button small action-button" data-action="update">Update</button></div></article>
+        </div><div class="empty" id="empty-state">No tools match your search.</div></section>
+
+        <aside class="side-stack"><section class="panel release"><h2>Latest from the repo</h2><p>Small, useful releases from the Handcrafft ecosystem.</p><div class="release-list"><div class="release-item"><div class="mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3v4M16 3v4M5 9h14M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/><path d="M8 13h3M8 17h2"/></svg></div><div><div class="release-name">Free SRT</div><div class="release-version">v1.4.2 · subtitle workflow</div></div><div class="release-date">Today</div></div><div class="release-item"><div class="mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 17 5-5 4 4 3-3 4 4"/><path d="M4 4h16v16H4z"/></svg></div><div><div class="release-name">Batch Canvas</div><div class="release-version">v0.9.1 · batch exports</div></div><div class="release-date">2d ago</div></div><div class="release-item"><div class="mini-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M8 7.5c0-1.4 1.8-2.5 4-2.5s4 1.1 4 2.5-1.8 2.5-4 2.5-4 1.1-4 2.5 1.8 2.5 4 2.5 4 1.1 4 2.5-1.8 2.5-4 2.5-4-1.1-4-2.5"/></svg></div><div><div class="release-name">Voice Notes</div><div class="release-version">v0.3.0 · local-first notes</div></div><div class="release-date">5d ago</div></div></div></section><section class="panel repo-card"><h2>Source &amp; updates</h2><p>The prototype is ready for a Git-backed catalog. Each program can point to its own release manifest.</p><div class="repo-line"><span>Catalog</span><span>tools.json</span></div><div class="repo-line"><span>Channel</span><span>stable</span></div><div class="repo-line"><span>Auto-check</span><span>On launch</span></div></section></aside>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast"><span class="toast-dot"></span><span id="toast-message">Done</span></div>
+
+  <script>
+    const body = document.body;
+    const themeNames = ['terminal', 'editorial'];
+    const themeNotes = { terminal: 'Focused, compact, keyboard-friendly', editorial: 'Calm, considered, content-led' };
+    const themeButtons = [...document.querySelectorAll('[data-theme-choice]')];
+    const toast = document.getElementById('toast');
+    let toastTimer;
+
+    function showToast(message) {
+      document.getElementById('toast-message').textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function setTheme(theme) {
+      body.dataset.theme = theme;
+      themeButtons.forEach(button => button.classList.toggle('active', button.dataset.themeChoice === theme));
+      document.getElementById('theme-note').textContent = themeNotes[theme];
+      localStorage.setItem('tools-hub-theme', theme);
+    }
+
+    themeButtons.forEach(button => button.addEventListener('click', () => setTheme(button.dataset.themeChoice)));
+    document.getElementById('theme-cycle').addEventListener('click', () => {
+      const next = themeNames[(themeNames.indexOf(body.dataset.theme) + 1) % themeNames.length];
+      setTheme(next); showToast('Switched to ' + next + ' design direction');
+    });
+
+    const search = document.getElementById('search');
+    const rows = [...document.querySelectorAll('.tool-row')];
+    const emptyState = document.getElementById('empty-state');
+    search.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      rows.forEach(row => { const match = row.dataset.tool.includes(query); row.style.display = match ? '' : 'none'; if (match) visible += 1; });
+      emptyState.style.display = visible ? 'none' : 'block';
+    });
+
+    function refreshCounts() {
+      const updates = rows.filter(row => row.dataset.update === 'true').length;
+      document.getElementById('nav-update-count').textContent = updates;
+      document.getElementById('panel-meta').textContent = `${rows.length} programs · ${rows.filter(row => row.dataset.installed === 'true').length} installed · ${updates} updates available`;
+      document.getElementById('update-title').textContent = updates ? `${updates} updates are ready to review` : 'Everything is up to date';
+      document.getElementById('update-subtitle').textContent = updates ? 'Choose what to update. Nothing changes without your approval.' : 'You are running the latest available versions.';
+      document.getElementById('update-all').textContent = updates ? 'Review updates' : 'Check again';
+      document.getElementById('update-banner').style.borderColor = updates ? '' : 'color-mix(in srgb, var(--success) 35%, var(--border))';
+    }
+
+    function updateRow(row, action) {
+      const button = row.querySelector('.action-button');
+      const status = row.querySelector('.status');
+      const tags = row.querySelector('.tool-tags');
+      button.disabled = true; button.textContent = action === 'install' ? 'Installing…' : 'Updating…';
+      setTimeout(() => {
+        button.disabled = false; button.textContent = action === 'install' ? 'Launch' : 'Launch'; button.classList.add('ghost');
+        row.dataset.installed = 'true'; row.dataset.update = 'false'; status.textContent = 'Ready'; status.classList.remove('update');
+        tags.innerHTML = '<span class="tag green">Installed</span><span class="tag">Latest</span><span class="tag">Git repo</span>';
+        showToast(action === 'install' ? `${row.querySelector('.tool-name').textContent} installed` : `${row.querySelector('.tool-name').textContent} updated`);
+        refreshCounts();
+      }, 850);
+    }
+
+    document.querySelectorAll('.action-button').forEach(button => button.addEventListener('click', () => updateRow(button.closest('.tool-row'), button.dataset.action)));
+    document.querySelectorAll('.launch-button').forEach(button => button.addEventListener('click', () => showToast('Launching Free SRT…')));
+    document.getElementById('update-all').addEventListener('click', () => {
+      const pending = rows.filter(row => row.dataset.update === 'true');
+      if (!pending.length) { showToast('Checking the Git repo for updates…'); setTimeout(() => showToast('No new updates found'), 900); return; }
+      document.querySelector('[data-tab="updates"]').click();
+      showToast('Review the highlighted updates below');
+    });
+    document.getElementById('check-side').addEventListener('click', () => { showToast('Checking the Git repo…'); setTimeout(() => { refreshCounts(); showToast('Catalog checked · 2 updates available'); }, 900); });
+
+    document.querySelectorAll('.nav-button[data-tab]').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('.nav-button[data-tab]').forEach(item => item.classList.remove('active'));
+      button.classList.add('active');
+      const tab = button.dataset.tab;
+      document.getElementById('crumb-label').textContent = button.querySelector('span')?.textContent || tab;
+      if (tab === 'updates') {
+        document.getElementById('panel-title').textContent = 'Review updates';
+        document.getElementById('panel-meta').textContent = `${rows.filter(row => row.dataset.update === 'true').length} programs waiting for your approval`;
+      } else if (tab === 'library') {
+        document.getElementById('panel-title').textContent = 'Tool library';
+        document.getElementById('panel-meta').textContent = 'Browse every available handcrafted program';
+      } else if (tab === 'settings') {
+        document.getElementById('panel-title').textContent = 'Hub settings';
+        document.getElementById('panel-meta').textContent = 'Repository, update channel and preferences';
+      } else {
+        document.getElementById('panel-title').textContent = 'Your toolkit'; refreshCounts();
+      }
+      document.getElementById('tool-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+
+    const savedTheme = localStorage.getItem('tools-hub-theme');
+    if (savedTheme && themeNames.includes(savedTheme)) setTheme(savedTheme);
+    refreshCounts();
+  </script>
+</body>
+</html>

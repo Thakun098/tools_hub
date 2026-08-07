@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light" data-base-url="{{ base_url|default('', true) }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Free SRT</title>
+  <link rel="icon" type="image/png" href="static/free-srt-great.png">
+  <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+<header class="app-bar">
+  <div class="brand-block">
+    <img class="brand-logo" src="static/free-srt-great.png" alt=""><div class="brand" aria-label="Free SRT">Free <span>SRT</span></div>
+    <div class="brand-divider"></div>
+    <div class="page-title">ตรวจและแก้คำบรรยาย</div>
+  </div>
+  <div class="app-actions">
+    <div class="save-state header-save-state"><span id="save-indicator" class="dot saved"></span><span id="save-label">บันทึกแล้ว</span></div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="เปลี่ยนธีม" title="เปลี่ยนธีม"><span class="theme-icon" aria-hidden="true">☾</span><span class="theme-label">โหมดมืด</span></button>
+    <button id="header-open-file" class="top-action" type="button"><span aria-hidden="true">▱</span> เปิดไฟล์</button>
+    <button id="header-save" class="top-action" type="button" disabled><span aria-hidden="true">▣</span> บันทึก</button>
+    <button id="header-download-srt" class="top-action" type="button" disabled><span aria-hidden="true">↥</span> ส่งออก SRT</button>
+    <button id="header-download-txt" class="top-action" type="button" disabled><span aria-hidden="true">↥</span> ส่งออก TXT</button>
+    <button id="header-render" class="top-action primary-action" type="button" disabled><span aria-hidden="true">▤</span> สร้างวิดีโอพร้อมซับ</button>
+  </div>
+</header>
+
+<main class="container">
+  <section class="welcome" id="welcome-section">
+    <img class="welcome-logo" src="static/free-srt-great.png" alt="Free SRT x Great">
+    <h1>สร้างคำบรรยายจากเสียงและวิดีโอ</h1>
+    <p>ถอดเสียง ตรวจคำ และสร้างไฟล์ SRT ภายในเครื่องของคุณ</p>
+  </section>
+
+  <section id="recovery-card" class="recovery-card" hidden>
+    <div><strong>พบคำบรรยายที่สำรองอัตโนมัติ</strong><p id="recovery-summary" class="hint"></p></div>
+    <div class="recovery-actions"><button id="discard-backup" class="secondary">ไม่ใช้ข้อมูลสำรอง</button><button id="restore-backup">กู้คืนคำบรรยาย</button></div>
+  </section>
+
+  <section class="card" id="models-section">
+    <div class="card-title"><span>1. เลือกโมเดล Whisper</span><span class="badge">ทำงานในเครื่อง</span></div>
+    <p class="hint">โมเดลใหญ่ขึ้นมักแม่นยำกว่า แต่ใช้เวลาและ RAM มากขึ้น สมุดคำศัพท์จะช่วยให้ระบบรู้จักชื่อเฉพาะในงานถัดไป</p>
+    <div id="model-list" class="model-list"><div class="hint">กำลังอ่านข้อมูลโมเดล...</div></div>
+  </section>
+
+  <section class="card" id="transcribe-section">
+    <div class="card-title"><span>2. เลือกไฟล์และถอดเสียง</span><span id="job-status" class="badge">พร้อมใช้งาน</span></div>
+    <div class="local-picker"><div><strong>ไฟล์ขนาดใหญ่? เลือกจากเครื่องโดยตรง</strong><div class="hint">แนะนำสำหรับไฟล์หลาย GB: โปรแกรมจะอ่านไฟล์ต้นฉบับโดยตรงและไม่คัดลอกเข้า uploads/</div></div><button id="choose-local-file" class="success">เลือกไฟล์จากเครื่อง</button></div>
+    <div id="local-preflight" class="preflight" hidden></div>
+    <div id="upload-zone" class="upload-zone">
+      <div class="upload-icon">↑</div><div class="upload-text">อัปโหลดไฟล์ หรือ ลากไฟล์มาวาง</div>
+      <div class="hint">เหมาะสำหรับไฟล์ขนาดเล็กและโหมด server: ระบบจะคัดลอกไฟล์เข้าโปรแกรมก่อนเริ่มงาน</div>
+      <input id="file-input" type="file" accept="audio/*,video/*">
+    </div>
+    <div id="file-info"></div>
+    <div class="settings">
+      <div><label for="model-select">โมเดล</label><select id="model-select"></select></div>
+      <div><label for="language">ภาษาในไฟล์</label><select id="language"><option value="auto">ตรวจจับอัตโนมัติ</option><option value="th">ภาษาไทย</option><option value="en">English</option><option value="ja">日本語</option><option value="zh">中文</option><option value="ko">한국어</option></select></div>
+      <div><label for="threads">CPU Threads</label><input id="threads" type="number" min="1" max="64" placeholder="อัตโนมัติ"></div>
+      <div><label for="compute-mode">วิธีประมวลผล</label><select id="compute-mode"><option value="cpu">CPU เท่านั้น</option><option value="gpu">เร่งด้วย GPU</option></select></div>
+      <div id="gpu-backend-wrap" hidden><label for="gpu-backend">GPU Backend</label><select id="gpu-backend"><option value="auto">อัตโนมัติ</option><option value="cuda">NVIDIA CUDA</option><option value="vulkan">Vulkan</option></select></div>
+    </div>
+    <div id="gpu-runtime-panel" class="preflight" hidden><strong id="gpu-runtime-title">GPU acceleration</strong><span id="gpu-runtime-message" class="hint"></span><button id="gpu-runtime-download" class="secondary" type="button" hidden>ดาวน์โหลดส่วนเสริม GPU</button><button id="gpu-runtime-cancel" class="danger" type="button" hidden>ยกเลิกการดาวน์โหลด</button></div>
+    <div class="center-actions"><button id="start-btn" disabled>เริ่มถอดเสียง</button><button id="open-glossary-top" class="secondary">เปิดสมุดคำศัพท์</button></div>
+    <div id="progress-container" class="terminal" hidden>
+      <div class="progress-header"><strong id="progress-status">กำลังอัปโหลด...</strong><span id="progress-percent">0%</span></div>
+      <div class="progress"><div id="job-progress" style="width:0"></div></div>
+      <div id="progress-eta" class="eta-text" aria-live="polite">กำลังประเมินเวลา...</div>
+      <div class="job-actions"><button id="cancel-job" class="danger">ยกเลิกงาน</button></div>
+      <div id="logs" class="logs"></div>
+    </div>
+  </section>
+
+  <section id="editor-section" class="editor-shell" hidden>
+    <div class="editor-meta">
+      <div><strong id="editor-file-name">Subtitle Editor</strong><span id="editor-backup-state" class="backup-state">สำรองอัตโนมัติพร้อมทำงาน</span><span class="hint">แก้ไขด้านขวา แล้วดูผลบนวิดีโอได้ทันที</span></div>
+      <div class="editor-meta-actions"><button id="reset-srt" class="subtle-action">คืนค่าต้นฉบับ</button><button id="open-glossary" class="subtle-action">สมุดคำศัพท์</button></div>
+    </div>
+
+    <div class="editor-workspace">
+      <div class="preview-column">
+        <div class="media-panel">
+          <div class="media-stage">
+            <div id="media-host"></div>
+            <button id="subtitle-overlay" class="subtitle-overlay" type="button" hidden aria-label="แก้คำบรรยายที่กำลังแสดง"></button>
+          </div>
+          <div class="media-help"><span><kbd>Space</kbd> เล่น/หยุด</span><span><kbd>Ctrl+S</kbd> บันทึก</span><span><kbd>Ctrl+Z</kbd> ย้อนกลับ</span></div>
+        </div>
+      </div>
+
+      <div class="cue-column">
+        <div class="editor-toolbar">
+          <div class="tool-group history-tools"><button id="undo" class="icon-btn" title="ย้อนกลับ" disabled>↶</button><button id="redo" class="icon-btn" title="ทำซ้ำ" disabled>↷</button></div>
+          <button id="toggle-find" class="icon-btn" title="ค้นหา/แทนที่">⌕</button>
+          <button id="play-current" class="toolbar-play" type="button">▶ <span>เล่นช่วงนี้</span></button>
+          <div class="style-control font-control"><label for="subtitle-font">ฟอนต์</label><select id="subtitle-font"><option>กำลังอ่านข้อมูลฟอนต์...</option></select></div>
+          <div class="style-control size-control"><label for="subtitle-font-size">ขนาด</label><input id="subtitle-font-size" type="number" min="18" max="72" step="0.5" value="36"></div>
+          <button id="toggle-subtitle-style" class="icon-btn style-toggle" type="button" title="ปรับเส้นขอบ พื้นหลัง เงา และตำแหน่ง" aria-expanded="false" aria-controls="subtitle-style-panel">Aa</button>
+          <button id="add-cue" class="icon-btn add-cue-top" title="เพิ่มบรรทัด">＋</button>
+        </div>
+
+        <div id="subtitle-style-panel" class="subtitle-style-panel" hidden>
+          <div class="subtitle-style-heading"><strong>รูปแบบคำบรรยาย</strong><span class="hint">พรีวิวจำลองสเกลเดียวกับ FFmpeg ตามขนาดเฟรมวิดีโอ</span></div>
+          <label class="range-control" for="subtitle-outline"><span>เส้นขอบ (Stroke)</span><output id="subtitle-outline-value" for="subtitle-outline">2.00</output><input id="subtitle-outline" type="range" min="0" max="6" step="0.25" value="2"></label>
+          <label class="range-control" for="subtitle-shadow"><span>เงา (Shadow)</span><output id="subtitle-shadow-value" for="subtitle-shadow">0.00</output><input id="subtitle-shadow" type="range" min="0" max="6" step="0.25" value="0"></label>
+          <label class="switch-control" for="subtitle-background"><span><strong>พื้นหลัง</strong><small>แถบดำโปร่งด้านหลังข้อความ</small></span><input id="subtitle-background" type="checkbox" checked><span class="switch-track" aria-hidden="true"></span></label>
+          <div class="position-control"><label for="subtitle-position">ตำแหน่งแนวตั้ง</label><select id="subtitle-position"><option value="top">ด้านบน</option><option value="middle">กึ่งกลาง</option><option value="bottom" selected>ด้านล่าง</option></select></div>
+          <label class="range-control margin-control" for="subtitle-margin"><span>ระยะจากขอบ</span><output id="subtitle-margin-value" for="subtitle-margin">48.0</output><input id="subtitle-margin" type="range" min="0" max="240" step="0.5" value="48"></label>
+        </div>
+
+        <div id="find-panel" class="find-panel" hidden>
+          <div><label for="find-text">ค้นหา</label><input id="find-text" type="text" placeholder="คำที่ต้องการค้นหา"></div>
+          <div><label for="replace-text">แทนที่ด้วย</label><input id="replace-text" type="text" placeholder="คำที่ถูกต้อง"></div>
+          <label class="check"><input id="match-case" type="checkbox"> ตัวพิมพ์ตรงกัน</label>
+          <button id="replace-all">แทนที่ทั้งหมด</button><span id="replace-result" class="hint"></span>
+        </div>
+
+        <div class="cue-header"><span>#</span><span>เวลา</span><span>ข้อความคำบรรยาย</span><span>ระยะเวลา</span></div>
+        <div id="cue-list" class="cue-list"></div>
+        <div class="editor-footer"><button id="add-cue-bottom" class="secondary">＋ เพิ่มบรรทัดท้ายรายการ</button></div>
+
+        <div class="quality-bar">
+          <div><strong>⚠ ตรวจสอบคุณภาพ</strong><span id="quality-summary" class="hint"> กำลังตรวจ...</span></div>
+          <div class="quality-actions"><button id="next-quality-issue" class="secondary" disabled>ปัญหาถัดไป ↓</button><div id="quality-filters" class="quality-filters"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <section id="render-panel" class="render-panel">
+      <div class="render-heading"><div><h3>ผลการเรนเดอร์</h3><p class="hint">สร้างไฟล์ MP4 ที่ฝังคำบรรยายล่าสุดลงในวิดีโอ</p></div><button id="start-render" class="success">สร้างวิดีโอพร้อมซับ</button></div>
+      <div id="render-progress" class="terminal" hidden>
+        <div class="progress-header"><strong id="render-status">กำลังเตรียมวิดีโอ...</strong><span id="render-percent">0%</span></div>
+        <div class="progress"><div id="render-progress-bar" style="width:0"></div></div>
+        <div id="render-eta" class="eta-text" aria-live="polite">กำลังประเมินเวลา...</div>
+        <div class="job-actions"><button id="cancel-render" class="danger">ยกเลิกการสร้างวิดีโอ</button></div>
+        <div id="render-logs" class="logs"></div>
+      </div>
+      <div id="render-result" class="render-result" hidden>
+        <div><strong>วิดีโอพร้อมซับสร้างเสร็จแล้ว</strong><p class="hint">นี่คือไฟล์ MP4 ผลลัพธ์จริงที่ฝังคำบรรยายแล้ว</p></div>
+        <video id="render-output-player" controls preload="metadata"></video>
+        <button id="download-video" class="success">ดาวน์โหลดวิดีโอ</button>
+      </div>
+    </section>
+  </section>
+</main>
+
+<dialog id="glossary-dialog">
+  <div class="dialog-head"><div><h2>สมุดคำศัพท์</h2><p>บันทึกชื่อเฉพาะหรือคำที่ระบบมักฟังผิด เพื่อใช้กับงานนี้และช่วย Whisper ในรอบถัดไป</p></div><button id="close-glossary" class="icon-only" aria-label="ปิด">×</button></div>
+  <div class="glossary-guide"><strong>ตัวอย่าง:</strong> “พรีเมียโปร” → “Premiere Pro” หรือ “คร” → เว้นว่างเพื่อลบคำ</div>
+  <div class="glossary-columns"><span>คำที่มักพบผิด/ต้องการลบ</span><span>คำที่ถูกต้อง (เว้นว่าง = ลบ)</span><span></span></div>
+  <div id="glossary-list"></div>
+  <div class="glossary-tools"><button id="add-term" class="secondary">＋ เพิ่มคำ</button><button id="import-glossary" class="secondary">นำเข้า</button><button id="export-glossary" class="secondary">ส่งออก</button><input id="glossary-import-file" type="file" accept=".json,.txt,.csv" hidden></div>
+  <div class="dialog-actions"><span id="glossary-message" class="hint"></span><button id="apply-glossary" class="secondary">ใช้กับคำบรรยายนี้</button><button id="save-glossary">บันทึกสมุดคำศัพท์</button></div>
+</dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<div hidden aria-hidden="true"><button id="save-srt" type="button"></button><button id="download-srt" type="button"></button><button id="download-txt" type="button"></button></div>
+<script type="module" src="static/app.js"></script>
+</body>
+</html>

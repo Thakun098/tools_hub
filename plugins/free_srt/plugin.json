@@ -1,0 +1,46 @@
+{
+  "id": "free_srt",
+  "name": "FreeSRT",
+  "description": "ถอดเสียงและแก้ไข subtitle ด้วย Whisper.cpp",
+  "icon": "🎬",
+  "version": "4.0.0",
+  "adapter_version": "1.0.0",
+  "url_prefix": "/srt",
+  "entry_point": "__init__:register",
+  "python_package": "toolshub_free_srt",
+  "bundled": false,
+  "distribution": {
+    "include": [
+      "__init__.py",
+      "app.py",
+      "plugin.json",
+      "README.md",
+      "requirements.txt",
+      "THIRD_PARTY_NOTICES.md",
+      "licenses/**/*",
+      "templates/**/*",
+      "static/**/*",
+      "freesrt/**/*.py",
+      "toolshub_free_srt/**/*.py",
+      "bin/Release/whisper-cli.exe",
+      "bin/Release/whisper.dll",
+      "bin/Release/ggml.dll",
+      "bin/Release/ggml-base.dll",
+      "bin/Release/ggml-cpu-x64.dll",
+      "bin/Release/ggml-cpu-sse42.dll",
+      "bin/Release/ggml-cpu-sandybridge.dll",
+      "bin/Release/ggml-cpu-haswell.dll",
+      "bin/Release/ggml-cpu-alderlake.dll"
+    ],
+    "external_files": [
+      {
+        "environment": "FFMPEG_SOURCE",
+        "target": "bin/ffmpeg.exe"
+      },
+      {
+        "environment": "FFPROBE_SOURCE",
+        "target": "bin/ffprobe.exe"
+      }
+    ]
+  }
+}

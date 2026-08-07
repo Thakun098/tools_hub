@@ -1,0 +1,49 @@
+# Python caches and local environments
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/venv/
+**/.venv/
+
+# Build and release artifacts
+**/build/
+**/build_test/
+**/dist/
+*.zip
+*.7z
+
+# User and runtime data
+/data/
+/models/
+/outputs/
+/uploads/
+/runtimes/
+plugins/*/data/
+plugins/*/models/
+plugins/*/output/
+plugins/*/outputs/
+plugins/*/uploads/
+
+# Local agent and editor state
+**/.agent-work/
+**/.agents/
+**/.claude/
+**/.claude-flow/
+**/.swarm/
+**/.vscode/settings.json
+**/.idea/
+**/.mcp.json
+**/agentdb.rvf*
+**/ruvector.db
+
+# Logs, temporary files, and secrets
+*.log
+*.tmp
+.env
+*.env.local
+secrets.json
+
+# OS metadata
+Thumbs.db
+desktop.ini
+.DS_Store
