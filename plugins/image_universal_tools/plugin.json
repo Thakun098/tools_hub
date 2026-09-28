@@ -1,0 +1,31 @@
+{
+  "id": "image_universal_tools",
+  "name": "Image Universal Tools",
+  "description": "ลบพื้นหลังและแปลงไฟล์ภาพแบบ local-first",
+  "icon": "IMG",
+  "version": "0.1.0",
+  "adapter_version": "1.0.0",
+  "url_prefix": "/image-tools",
+  "entry_point": "__init__:register",
+  "python_package": "toolshub_image_universal_tools",
+  "bundled": false,
+  "distribution": {
+    "include": [
+      "__init__.py",
+      "plugin.json",
+      "README.md",
+      "THIRD_PARTY_NOTICES.md",
+      "licenses/**/*",
+      "templates/**/*",
+      "static/**/*",
+      "toolshub_image_universal_tools/**/*.py",
+      "model_catalog.json"
+    ],
+    "external_files": [
+      {
+        "environment": "IMAGE_ENGINE_SOURCE",
+        "target": "runtime/image-engine.exe"
+      }
+    ]
+  }
+}

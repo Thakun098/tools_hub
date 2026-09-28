@@ -1,0 +1,44 @@
+{
+  "catalog_version": 1,
+  "models": [
+    {
+      "id": "fast-u2netp",
+      "tier": "Fast",
+      "engine_name": "u2netp",
+      "name_th": "เร็วและใช้ RAM น้อย",
+      "description_th": "เหมาะกับงานทั่วไปและภาพตัวอย่าง",
+      "file_name": "u2netp.onnx",
+      "size_bytes": 4574861,
+      "checksum": "sha256:309c8469258dda742793dce0ebea8e6dd393174f89934733ecc8b14c76f4ddd8",
+      "url": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2netp.onnx",
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/xuebinqin/U-2-Net"
+    },
+    {
+      "id": "balanced-isnet",
+      "tier": "Balanced",
+      "engine_name": "isnet-general-use",
+      "name_th": "สมดุลคุณภาพและเวลา",
+      "description_th": "ค่าเริ่มต้นสำหรับงานลบพื้นหลังทั่วไป",
+      "file_name": "isnet-general-use.onnx",
+      "size_bytes": 178648008,
+      "checksum": "sha256:60920e99c45464f2ba57bee2ad08c919a52bbf852739e96947fbb4358c0d964a",
+      "url": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/isnet-general-use.onnx",
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/xuebinqin/DIS"
+    },
+    {
+      "id": "quality-birefnet-lite",
+      "tier": "Quality",
+      "engine_name": "birefnet-general-lite",
+      "name_th": "เน้นรายละเอียดขอบ",
+      "description_th": "คุณภาพสูงขึ้นแต่ใช้ RAM และเวลามากกว่า",
+      "file_name": "birefnet-general-lite.onnx",
+      "size_bytes": 224005088,
+      "checksum": "sha256:5600024376f572a557870a5eb0afb1e5961636bef4e1e22132025467d0f03333",
+      "url": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/BiRefNet-general-bb_swin_v1_tiny-epoch_232.onnx",
+      "license": "MIT",
+      "source_url": "https://github.com/ZhengPeng7/BiRefNet"
+    }
+  ]
+}

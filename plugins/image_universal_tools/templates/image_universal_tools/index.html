@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image Universal Tools</title>
+  <link rel="stylesheet" href="{{ url_for('.static', filename='styles.css') }}">
+</head>
+<body data-base-url="{{ base_url }}">
+  <header class="topbar">
+    <a class="back-button" href="/" aria-label="กลับ Tools Hub">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      กลับ Tools Hub
+    </a>
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m4 17 5-5 4 4 3-3 4 4"/></svg>
+      </span>
+      <h1>Image Universal Tools</h1>
+    </div>
+    <div class="local-status"><span></span>ประมวลผลในเครื่อง (ออฟไลน์)</div>
+  </header>
+
+  <main class="page-shell">
+    <section class="workspace" aria-label="พื้นที่เตรียมงานรูปภาพ">
+      <div class="source-pane">
+        <div id="drop-zone" class="drop-zone" aria-label="พื้นที่ลากและวางไฟล์รูป">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5h14v-5"/></svg>
+          <strong>ลากไฟล์รูปมาวางที่นี่</strong>
+          <span>รองรับ PNG, JPG, JPEG, WebP, BMP และ TIFF</span>
+          <button id="choose-button" class="button button-outline" type="button">เลือกไฟล์</button>
+          <input id="file-input" type="file" multiple accept=".png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff" hidden>
+        </div>
+
+        <div class="selection-head">
+          <div><strong>ไฟล์ที่เลือก</strong> <span id="selection-count">(0)</span></div>
+          <button id="clear-files" class="text-button" type="button" disabled>ล้างทั้งหมด</button>
+        </div>
+        <div id="preview" class="preview checkerboard">
+          <div class="preview-empty">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM7 15l3-3 3 3 2-2 2 2M9 9h.01"/></svg>
+            <span>เลือกภาพเพื่อดูตัวอย่าง</span>
+          </div>
+          <img id="preview-image" alt="ตัวอย่างภาพที่เลือก" hidden>
+        </div>
+        <div id="selected-list" class="selected-list" aria-live="polite"></div>
+      </div>
+
+      <div class="control-pane">
+        <div class="tabs" role="tablist" aria-label="ประเภทงาน">
+          <button id="remove-tab" class="tab active" role="tab" aria-selected="true" aria-controls="remove-panel" data-operation="remove_background">ลบพื้นหลัง</button>
+          <button id="convert-tab" class="tab" role="tab" aria-selected="false" aria-controls="convert-panel" data-operation="convert">แปลงไฟล์</button>
+        </div>
+
+        <div id="remove-panel" class="operation-panel" role="tabpanel" aria-labelledby="remove-tab">
+          <div class="section-label">เลือกระดับโมเดล</div>
+          <div id="model-options" class="model-options" aria-live="polite"></div>
+          <div class="model-download">
+            <div>
+              <strong id="model-title">กำลังตรวจสอบโมเดล…</strong>
+              <span id="model-detail">โมเดลจะดาวน์โหลดเมื่อคุณกดเท่านั้น</span>
+            </div>
+            <div id="model-progress" class="progress" hidden><span></span></div>
+            <button id="model-action" class="button button-outline" type="button" disabled>รอสักครู่</button>
+          </div>
+          <p class="privacy-note">โมเดลเก็บอยู่ในโฟลเดอร์ของ Hub และภาพไม่ถูกส่งออกไปภายนอก</p>
+        </div>
+
+        <div id="convert-panel" class="operation-panel" role="tabpanel" aria-labelledby="convert-tab" hidden>
+          <label class="field">
+            <span>Format ปลายทาง</span>
+            <select id="output-format">
+              <option>PNG</option>
+              <option>JPEG</option>
+              <option>WebP</option>
+              <option>BMP</option>
+              <option>TIFF</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Quality <output id="quality-value">90</output></span>
+            <input id="quality" type="range" min="1" max="100" value="90">
+          </label>
+          <div class="field">
+            <span>พื้นหลังของภาพโปร่งใส</span>
+            <div class="background-row">
+              <label><input id="transparent-background" type="radio" name="background-mode" value="transparent" checked> โปร่งใส</label>
+              <label><input id="color-background" type="radio" name="background-mode" value="color"> ใช้สี</label>
+              <input id="background-color" type="color" value="#ffffff" aria-label="เลือกสีพื้นหลัง" disabled>
+            </div>
+            <p id="alpha-warning" class="warning" hidden>Format นี้ไม่รองรับ transparency จึงต้องเลือกสีพื้นหลัง</p>
+          </div>
+          <p class="privacy-note">TIFF จะใช้เฉพาะภาพหน้าแรก และ output ทุกไฟล์จะถูกแปลงเป็น sRGB</p>
+        </div>
+
+        <div class="action-area">
+          <button id="start-button" class="button button-primary" type="button" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 9 6-9 6Z"/></svg>
+            <span>เริ่มลบพื้นหลัง</span>
+          </button>
+          <div class="metadata-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 2.8 7.6 7 10 4.2-2.4 7-5.5 7-10V6l-7-3Z"/></svg>
+            ลบ EXIF/Metadata โดยอัตโนมัติ
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="queue-section" aria-labelledby="queue-title">
+      <div class="queue-head">
+        <div><h2 id="queue-title">คิวงาน</h2><span id="queue-count">(0)</span></div>
+        <button id="cancel-all" class="button button-danger" type="button" disabled>ยกเลิกทั้งหมด</button>
+      </div>
+      <div class="queue-table-wrap">
+        <table class="queue-table">
+          <thead><tr><th>ไฟล์</th><th>การดำเนินการ</th><th>ความคืบหน้า</th><th>สถานะ</th><th><span class="sr-only">การดำเนินการ</span></th></tr></thead>
+          <tbody id="queue-body">
+            <tr class="queue-empty"><td colspan="5">ยังไม่มีงานในคิว</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <span>ไฟล์ผลลัพธ์บันทึกใน outputs/image_universal_tools/ และไม่เขียนทับไฟล์เดิม</span>
+      <span>จำกัดภาพไม่เกิน 50 megapixels</span>
+    </footer>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="{{ url_for('.static', filename='app.js') }}"></script>
+</body>
+</html>
